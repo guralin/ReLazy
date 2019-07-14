@@ -41,22 +41,25 @@ def input_eng_word_in_loop():
 
 class model():
     def __init__(self):
-        self.conn = sqlite3.connect('word.db')
-        self.curs = self.conn.cursor()
+        self.connect_database = 'word.db'
     def add_word_to_sqlite3(self,jpn_word,eng_word):
+        conn = sqlite3.connect(self.connect_database)
+        curs = conn.cursor()
         ins = 'INSERT INTO words(jpn_word, eng_word) VALUES(?, ?)' 
-        self.curs.execute(ins, (jpn_word,eng_word))
-        self.conn.commit()
-        self.conn.close()
+        curs.execute(ins, (jpn_word,eng_word))
+        conn.commit()
+        conn.close()
         
     def show_newest_words(self,list_number):
+        conn = sqlite3.connect(self.connect_database)
+        curs = conn.cursor()
         show = 'SELECT jpn_word,eng_word FROM words ORDER BY id DESC LIMIT (?)'
-        self.curs.execute(show, (list_number,))
-        result = self.curs.fetchall()
+        curs.execute(show, (list_number,))
+        result = curs.fetchall()
         for row in result:
             print('{0:12} | {1}'.format(row[0],row[1]))
             print("--------------------------------------")
-        self.conn.close()
+        conn.close()
     
 
 # def add_word_to_sqlite3(jpn_word,eng_word):
