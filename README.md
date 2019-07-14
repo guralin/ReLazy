@@ -1,11 +1,10 @@
 # weblio辞書から英単語を検索するプログラム
 ## 概要
 英単語を検索する際に、ブラウザを開くと何故かTwitterやYoutubeなどが一緒に開かれてしまい作業が全てストップする不具合が発生したためコンソール上で英単語を検索して履歴を保存できるプログラムを作りました。
-## 仕様
-動作環境
+## 動作環境
 - Ubuntu18.04で作成
 - sqlite3を使用 (`sudo apt install sqlite3` が必要になるかもしれません)
-- Pythonのモジュール
+- Python3のモジュール
     - sqlite3
     - click
     - BeautifulSoup
