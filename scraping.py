@@ -62,23 +62,6 @@ class model():
         conn.close()
     
 
-# def add_word_to_sqlite3(jpn_word,eng_word):
-#     conn = sqlite3.connect('scraped_word.db')
-#     curs = conn.cursor()
-#     ins = ' INSERT INTO words(jpn_word, eng_word) VALUES(?, ?)' 
-#     curs.execute(ins, (jpn_word,eng_word))
-#     #curs.execute('SELECT * FROM words')
-#     #print(curs.fetchall())
-#     conn.commit()
-#     conn.close()
-#     
-# def show_newest_words(list_number):
-#     conn = sqlite3.connect('scraped_word.db')
-#     curs = conn.cursor()
-#     show = 'SELECT * FROM words ORDER BY id DESC LIMIT (?)'
-#     curs.execute(show, (list_number,))
-#     print(curs.fetchall())
-#     conn.close()
 
 if __name__ == "__main__":
     mainThread()
