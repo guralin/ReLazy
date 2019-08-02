@@ -3,6 +3,8 @@
 
 import sqlite3
 import requests
+import datetime
+
 import click
 import sys
 
@@ -21,6 +23,7 @@ def mainThread():
 def cmd(list_number):
     m = sqlite3_model()
     m.show_newest_words(list_number)
+
 
 def search_weblio_dictionary(word):
     r = requests.get('https://ejje.weblio.jp/content/' + word)
@@ -44,16 +47,17 @@ def input_eng_word_in_loop():
         else:
             print(ans)
             m.add_word(word,ans)
-            
 
+            
 class sqlite3_model():
     def __init__(self):
         self.connect_database = 'word.db'
     def add_word(self,jpn_word,eng_word):
         conn = sqlite3.connect(self.connect_database)
         curs = conn.cursor()
-        ins = 'INSERT INTO words(jpn_word, eng_word) VALUES(?, ?)' 
-        curs.execute(ins, (jpn_word,eng_word))
+        datetime_now = datetime.datetime.now()
+        ins = 'INSERT INTO words(timestamp,jpn_word, eng_word) VALUES(?, ?, ?)'
+        curs.execute(ins, (datetime_now,jpn_word,eng_word))
         conn.commit()
         conn.close()
         
@@ -67,7 +71,6 @@ class sqlite3_model():
             print('{0:12} | {1}'.format(row[0],row[1]))
             print("--------------------------------------")
         conn.close()
-    
 
 
 if __name__ == "__main__":
