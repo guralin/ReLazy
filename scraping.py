@@ -6,16 +6,24 @@ import requests
 import datetime
 
 import click
+import sys
+
 from bs4 import BeautifulSoup
+
+    
+def mainThread():
+    args = sys.argv
+    if len(args) == 1:
+        input_eng_word_in_loop()
+    else:
+        cmd()
 
 @click.command()
 @click.option('-l','--list','list_number', default=0, help="print last words")
-def mainThread(list_number):
-    m = model()
-    if list_number != 0:
-        m.show_newest_words(list_number)
-    else:
-        input_eng_word_in_loop()
+def cmd(list_number):
+    m = sqlite3_model()
+    m.show_newest_words(list_number)
+
 
 def search_weblio_dictionary(word):
     r = requests.get('https://ejje.weblio.jp/content/' + word)
@@ -28,7 +36,7 @@ def search_weblio_dictionary(word):
     except AttributeError:
         return -1
 def input_eng_word_in_loop():
-    m = model()
+    m = sqlite3_model()
     while True:
         word = input('検索したい英単語を入力してください >')
         if word == 'exit()':
@@ -38,13 +46,13 @@ def input_eng_word_in_loop():
             print("検索された英単語は存在しませんでした")
         else:
             print(ans)
-            m.add_word_to_sqlite3(word,ans)
+            m.add_word(word,ans)
 
-
-class model():
+            
+class sqlite3_model():
     def __init__(self):
         self.connect_database = 'word.db'
-    def add_word_to_sqlite3(self,jpn_word,eng_word):
+    def add_word(self,jpn_word,eng_word):
         conn = sqlite3.connect(self.connect_database)
         curs = conn.cursor()
         datetime_now = datetime.datetime.now()
