@@ -3,6 +3,8 @@
 
 import sqlite3
 import requests
+import datetime
+
 import click
 from bs4 import BeautifulSoup
 
@@ -12,7 +14,7 @@ def mainThread(list_number):
     m = model()
     if list_number != 0:
         m.show_newest_words(list_number)
-    else:    
+    else:
         input_eng_word_in_loop()
 
 def search_weblio_dictionary(word):
@@ -37,7 +39,7 @@ def input_eng_word_in_loop():
         else:
             print(ans)
             m.add_word_to_sqlite3(word,ans)
-            
+
 
 class model():
     def __init__(self):
@@ -45,8 +47,9 @@ class model():
     def add_word_to_sqlite3(self,jpn_word,eng_word):
         conn = sqlite3.connect(self.connect_database)
         curs = conn.cursor()
-        ins = 'INSERT INTO words(jpn_word, eng_word) VALUES(?, ?)' 
-        curs.execute(ins, (jpn_word,eng_word))
+        datetime_now = datetime.datetime.now()
+        ins = 'INSERT INTO words(timestamp,jpn_word, eng_word) VALUES(?, ?, ?)'
+        curs.execute(ins, (datetime_now,jpn_word,eng_word))
         conn.commit()
         conn.close()
         
@@ -60,7 +63,6 @@ class model():
             print('{0:12} | {1}'.format(row[0],row[1]))
             print("--------------------------------------")
         conn.close()
-    
 
 
 if __name__ == "__main__":
