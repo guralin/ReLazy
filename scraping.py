@@ -18,10 +18,14 @@ def mainThread():
         cmd()
 
 @click.command()
-@click.option('-l','--list','list_number', default=0, help="print last words")
-def cmd(list_number):
+@click.option('-l','--list','list_number', default=0, help="print N pieces words")
+@click.option('-d','--days','days_ago', default=0, help="print N days ago")
+def cmd(list_number,days_ago):
     m = sqlite3_model()
-    m.show_newest_words(list_number)
+    if list_number:
+        m.show_newest_words(list_number)
+    if days_ago:
+        m.show_words_days_ago(days_ago)
 
 def input_eng_word_in_loop():
     while True:
@@ -69,16 +73,16 @@ def is_search_word_exist(word):
 class sqlite3_model():
     def __init__(self):
         self.connect_database = 'word.db'
-
+    
     def add_word(self,jpn_word,eng_word):
         conn = sqlite3.connect(self.connect_database)
         curs = conn.cursor()
         datetime_now = datetime.datetime.now()
-        ins = 'INSERT INTO words(timestamp,jpn_word, eng_word) VALUES(?, ?, ?)'
-        curs.execute(ins, (datetime_now,jpn_word,eng_word))
+        ins = 'INSERT INTO words(timestamp,jpn_word, eng_word) VALUES(CURRENT_TIMESTAMP, ?, ?)'
+        curs.execute(ins, (jpn_word,eng_word))
         conn.commit()
         conn.close()
-        
+
     def show_newest_words(self,list_number):
         conn = sqlite3.connect(self.connect_database)
         curs = conn.cursor()
@@ -86,7 +90,21 @@ class sqlite3_model():
         curs.execute(show, (list_number,))
         result = curs.fetchall()
         for row in result:
-            print('{0:12} | {1}'.format(row[0],row[1]))
+            print('{0:10} | {1}'.format(row[0],row[1]))
+            print("--------------------------------------")
+        conn.close()
+
+    def show_words_days_ago(self,period_days):
+        conn = sqlite3.connect(self.connect_database)
+        curs = conn.cursor()
+        period_days =  str(0 - period_days)
+        period_days_for_sql = period_days + ' days' 
+        show = "SELECT timestamp,jpn_word,eng_word FROM words WHERE datetime(timestamp,?) ORDER BY id DESC"
+        curs.execute(show,(period_days_for_sql,))
+        result = curs.fetchall()
+        for row in result:
+            #print('{0:12} | {1} | {2}'.format(row[0],row[1],row[2]))
+            print('{0:10} | {1}'.format(row[1],row[2]))
             print("--------------------------------------")
         conn.close()
 
