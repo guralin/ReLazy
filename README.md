@@ -28,4 +28,4 @@ python scraping.py
 
 - `python scraping.py -l {表示したい履歴の数}`:検索の履歴を表示します。
 
-
+- `python scraping.py -d {表示したい期間}` : 設定した数字の日にちの間の履歴を表示。
