@@ -18,8 +18,8 @@ def mainThread():
         cmd()
 
 @click.command()
-@click.option('-l','--list','list_number', default=0, help="print last words")
-@click.option('-d','--days','days_ago', default=0, help="print last words")
+@click.option('-l','--list','list_number', default=0, help="print N pieces words")
+@click.option('-d','--days','days_ago', default=0, help="print N days ago")
 def cmd(list_number,days_ago):
     m = sqlite3_model()
     if list_number:
@@ -90,7 +90,7 @@ class sqlite3_model():
         curs.execute(show, (list_number,))
         result = curs.fetchall()
         for row in result:
-            print('{0:12} | {1}'.format(row[0],row[1]))
+            print('{0:10} | {1}'.format(row[0],row[1]))
             print("--------------------------------------")
         conn.close()
 
@@ -103,7 +103,8 @@ class sqlite3_model():
         curs.execute(show,(period_days_for_sql,))
         result = curs.fetchall()
         for row in result:
-            print('{0:12} | {1}'.format(row[0],row[1]))
+            #print('{0:12} | {1} | {2}'.format(row[0],row[1],row[2]))
+            print('{0:10} | {1}'.format(row[1],row[2]))
             print("--------------------------------------")
         conn.close()
 
