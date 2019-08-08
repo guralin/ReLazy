@@ -9,7 +9,9 @@ import sqlite3
 import click
 from bs4 import BeautifulSoup
 
-    
+ERROR_STATUS = -1
+EXIT_STATUS = -2
+
 def mainThread():
     args = sys.argv
     if len(args) == 1:
@@ -35,11 +37,11 @@ def input_eng_word_in_loop():
             print('\nbye')
             sys.exit(0)
 
-        result = is_search_word_exist(word)
-        if   result == -2:
+        result = save_existing_word(word)
+        if   result == EXIT_STATUS:
             print('bye')
             sys.exit(0)
-        elif result == -1:
+        elif result == ERROR_STATUS:
             print("検索された英単語は存在しませんでした")
         else:
             print(result)
@@ -54,18 +56,18 @@ def search_weblio_dictionary(word):
         return ans
 # 検索した英単語が見つからない場合
     except AttributeError:
-        return -1
+        return ERROR_STATUS
 
 
-def is_search_word_exist(word):
+def save_existing_word(word):
     m = sqlite3_model()
 
     if word == 'exit()':
-        return -2
+        return EXIT_STATUS
 
     ans  = search_weblio_dictionary(word)
-    if ans == -1:
-        return -1
+    if ans == ERROR_STATUS:
+        return ERROR_STATUS
     else:
         m.add_word(word,ans)
         return ans
