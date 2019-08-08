@@ -100,8 +100,8 @@ class sqlite3_model():
         conn = sqlite3.connect(self.connect_database)
         curs = conn.cursor()
         period_days =  str(0 - period_days)
-        period_days_for_sql = period_days + ' days' 
-        show = "SELECT timestamp,jpn_word,eng_word FROM words WHERE datetime(timestamp,?) ORDER BY id DESC"
+        period_days_for_sql = period_days + ' days'
+        show = "SELECT timestamp,jpn_word,eng_word FROM words WHERE timestamp > datetime('now',?) ORDER BY id DESC"
         curs.execute(show,(period_days_for_sql,))
         result = curs.fetchall()
         for row in result:
