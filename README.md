@@ -15,20 +15,19 @@
 
 ## 導入
 ~~~
-git clone https://github.com/guralin/search_english_word.git
-cd search_english_word/
+git clone https://github.com/guralin/ReLazy.git
+cd ReLazy/
 pip install -r requirements.txt
 python create_db.py
 . set_command.sh
-python scraping.py
 ~~~
 ## コマンド集
-- `relazy`:入力待ち状態になり英単語を入力するたびに、和訳が表示されます。
+- `relazy`:入力待ち状態になり英単語を入力するたびに、和訳が表示される。
     - 入力待ち状態で`exit()`またはCtrl+Cで入力待ち状態から脱出
 
 - `relazy {検索したい英単語}`:検索したい英単語の和訳を表示する
 
-- `relazy -l {表示したい履歴の数}`:検索の履歴を表示します。
+- `relazy -l {表示したい履歴の数}`:検索の履歴を表示する。
 
 - `relazy -d {表示したい期間}` : 設定した数字の日にちの間の履歴を表示。
 
