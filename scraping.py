@@ -4,13 +4,16 @@
 import requests
 import datetime
 import sys
-import sqlite3
+import os
 
+import sqlite3
 import click
 from bs4 import BeautifulSoup
 
 ERROR_STATUS = -1
 EXIT_STATUS = -2
+
+DATABASE_PATH = os.path.dirname(__file__) + "/word.db"
 
 def mainThread():
     args = sys.argv
@@ -85,7 +88,7 @@ def save_existing_word(word):
 
 class sqlite3_model():
     def __init__(self):
-        self.connect_database = 'word.db'
+        self.connect_database = DATABASE_PATH
 
     def add_word(self,jpn_word,eng_word):
         conn = sqlite3.connect(self.connect_database)
