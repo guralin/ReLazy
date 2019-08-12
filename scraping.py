@@ -18,6 +18,7 @@ DATABASE_PATH = os.path.dirname(__file__) + "/word.db"
 def mainThread():
     args = sys.argv
     # 引数の最初がハイフンなら、オプションだと判断する
+    # 最初に引数の数を評価させることでIndexErrorを防ぐ
     if  len(args) > 1 and args[1][0] == '-':
         cmd()
 
