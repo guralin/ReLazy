@@ -55,7 +55,7 @@ def input_eng_word(word):
 def input_eng_word_in_loop():
     while True:
         try:
-            word = input('検索したい英単語を入力してください >')
+            word = input('検索したい英単語を入力してください > ')
         except KeyboardInterrupt:
             print('\nbye')
             sys.exit(0)
