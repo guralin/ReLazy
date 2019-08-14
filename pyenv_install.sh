@@ -41,23 +41,41 @@ if [[ $is_libssl -eq 0 ]]; then
     fi
 fi
 
+# pyenv install 3.6.6 の際にmakeが無いと失敗する
+sudo apt -y install gcc make 
+# 対話型インタープリタが使いやすくなる
+sudo apt -y install libbz2-dev libreadline-dev
+
 is_pyenv_path=`cat ~/.profile | grep "export PYENV_ROOT=$HOME/.pyenv" | wc -l`
+is_virtualenv_path=`cat ~/.profile | grep "eval $(pyenv virtualenv-init -)" | wc -l`
+
 if type "pyenv" > /dev/null 2>&1; then
     echo "pyenvはすでに存在します"     #コマンドが存在する時の処理
 else
     git clone https://github.com/yyuu/pyenv.git ~/.pyenv
-    echo 'export PYENV_ROOT=$HOME/.pyenv' >> ~/.profile
-    echo 'export PATH=$PYENV_ROOT/bin:$PATH'>> ~/.profile
-    echo 'eval "$(pyenv init -)"'>> ~/.profile
+    if [[ $is_pyenv_path -ge 1 ]]; then
+        echo 'export PYENV_ROOT=$HOME/.pyenv' >> ~/.profile
+        echo 'export PATH=$PYENV_ROOT/bin:$PATH'>> ~/.profile
+        echo 'eval "$(pyenv init -)"'>> ~/.profile
+    fi
     source ~/.profile
     pyenv install 3.6.6
+    is_python366=`pyenv versions | grep " 3.6.6$" | wc -l`
+    if [[ $is_python366 -eq 0 ]]; then
+        echo "python3.6.6のインストールに失敗したので、終了します。"
+        read
+        exit 0
+    fi
 
+    if [[ $is_virtualenv_path -ge 1 ]]; then
+        echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.profile
+    fi
     git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
-    echo 'eval "$(pyenv virtualenv-init -)"'
     pyenv virtualenv 3.6.6 relazy3.6.6
     pyenv local relazy3.6.6
     source ~/.profile
 fi
+
 is_pyenv=`pyenv version | grep "relazy3.6.6" | wc -l`
 
 if [[ $is_pyenv -eq 1 ]]; then
