@@ -77,7 +77,7 @@ sudo apt -y install libbz2-dev libreadline-dev
 # --------------python仮想環境の整備 -------------------------------
 
 is_pyenv_path=`cat ~/.profile | grep "export PYENV_ROOT=$HOME/.pyenv" | wc -l`
-if type "pyenv" > /dev/null 2>&1; then
+if [[ -a ~/.pyenv ]]; then
     echo "pyenvはすでに存在します"     #コマンドが存在する時の処理
 else
     git clone https://github.com/yyuu/pyenv.git ~/.pyenv
@@ -124,10 +124,17 @@ fi
 # --------------pipモジュールのインストール ------------------------
 
 is_pyenv=`pyenv version | grep "relazy3.6.6" | wc -l`
+
+using_module=`pip freeze`
+requirements=`cat requirements.txt`
 # 仮想環境がない場合は環境を汚してしまうためインストールを行わない
 if [[ $is_pyenv -eq 1 ]]; then
-    echo "使用モジュールのインストールを行います"
-    pip3 install -r requirements.txt
+    if [[ $using_module == $requirements ]]; then
+        echo "既にモジュールがインストールされています。"
+    else
+        echo "使用モジュールのインストールを行います"
+        pip3 install -r requirements.txt
+    fi
 else
     echo "仮想環境がうまく作られていないようです。pipモジュールのインストールを行いません"
 fi
