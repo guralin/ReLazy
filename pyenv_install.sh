@@ -83,6 +83,7 @@ else
     git clone https://github.com/yyuu/pyenv.git ~/.pyenv
 
     if [[ $is_pyenv_path -eq 0 ]]; then
+        echo '~/.profileにpyenvの設定を書き込みます'
         echo 'export PYENV_ROOT=$HOME/.pyenv' >> ~/.profile
         echo 'export PATH=$PYENV_ROOT/bin:$PATH'>> ~/.profile
         echo 'eval "$(pyenv init -)"'>> ~/.profile
@@ -107,6 +108,7 @@ fi
 
 is_virtualenv_path=`cat ~/.profile | grep "eval $(pyenv virtualenv-init -)" | wc -l`
 if [[ $is_virtualenv_path -eq 0 ]]; then
+    echo '~/.profileにvirtualenvの設定を書き込みます'
     echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.profile
 fi
 
@@ -122,11 +124,12 @@ fi
 # --------------pipモジュールのインストール ------------------------
 
 is_pyenv=`pyenv version | grep "relazy3.6.6" | wc -l`
+# 仮想環境がない場合は環境を汚してしまうためインストールを行わない
 if [[ $is_pyenv -eq 1 ]]; then
     echo "使用モジュールのインストールを行います"
     pip3 install -r requirements.txt
 else
-    echo "pyenvがうまくインストールされていないようです。pyenvを確認してみてください。"
+    echo "仮想環境がうまく作られていないようです。pipモジュールのインストールを行いません"
 fi
 
 # -----------終了------------
