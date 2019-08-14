@@ -122,7 +122,6 @@ fi
 # --------------pipモジュールのインストール ------------------------
 
 is_pyenv=`pyenv version | grep "relazy3.6.6" | wc -l`
-echo $is_pyenv
 if [[ $is_pyenv -eq 1 ]]; then
     echo "使用モジュールのインストールを行います"
     pip3 install -r requirements.txt
