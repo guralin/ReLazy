@@ -4,20 +4,30 @@
 import requests
 import datetime
 import sys
-import sqlite3
+import os
 
+import sqlite3
 import click
 from bs4 import BeautifulSoup
 
 ERROR_STATUS = -1
 EXIT_STATUS = -2
 
+DATABASE_PATH = os.path.dirname(__file__) + "/word.db"
+
 def mainThread():
     args = sys.argv
-    if len(args) == 1:
-        input_eng_word_in_loop()
-    else:
+    # 引数の最初がハイフンなら、オプションだと判断する
+    # 最初に引数の数を評価させることでIndexErrorを防ぐ
+    if  len(args) > 1 and args[1][0] == '-':
         cmd()
+
+    elif len(args) == 1:
+        input_eng_word_in_loop()
+
+    elif len(args) == 2:
+        word = args[1]
+        input_eng_word(word)
 
 @click.command()
 @click.option('-l','--list','list_number', default=0, help="print N pieces words")
@@ -29,23 +39,28 @@ def cmd(list_number,days_ago):
     if days_ago:
         m.show_words_days_ago(days_ago)
 
+def input_eng_word(word):
+    result = save_existing_word(word)
+
+    if   result == EXIT_STATUS:
+        print('bye')
+        sys.exit(0)
+
+    elif result == ERROR_STATUS:
+        print("検索された英単語は存在しませんでした")
+
+    else:
+        print(result)
+
 def input_eng_word_in_loop():
     while True:
         try:
-            word = input('検索したい英単語を入力してください >')
+            word = input('検索したい英単語を入力してください > ')
         except KeyboardInterrupt:
             print('\nbye')
             sys.exit(0)
+        input_eng_word(word)
 
-        result = save_existing_word(word)
-        if   result == EXIT_STATUS:
-            print('bye')
-            sys.exit(0)
-        elif result == ERROR_STATUS:
-            print("検索された英単語は存在しませんでした")
-        else:
-            print(result)
-# exit()が入力された場合
 
 def search_weblio_dictionary(word):
     r = requests.get('https://ejje.weblio.jp/content/' + word)
@@ -74,8 +89,8 @@ def save_existing_word(word):
 
 class sqlite3_model():
     def __init__(self):
-        self.connect_database = 'word.db'
-    
+        self.connect_database = DATABASE_PATH
+
     def add_word(self,jpn_word,eng_word):
         conn = sqlite3.connect(self.connect_database)
         curs = conn.cursor()
@@ -109,7 +124,6 @@ class sqlite3_model():
             print('{0:10} | {1}'.format(row[1],row[2]))
             print("--------------------------------------")
         conn.close()
-
 
 if __name__ == "__main__":
     mainThread()

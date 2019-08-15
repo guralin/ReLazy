@@ -6,26 +6,38 @@
 英単語を検索する際に、ブラウザを開くと何故かTwitterやYoutubeなどが一緒に開かれてしまい、やらなければいけないことが全てストップする不具合が発生したためコンソール上で英単語を検索して履歴を保存できるプログラムを作りました。
 
 ## 動作環境
-- Ubuntu18.04で作成
-- sqlite3を使用 (`sudo apt install sqlite3` が必要になるかもしれません)
-- Python3のモジュール
-    - sqlite3
-    - click
-    - BeautifulSoup
+- Ubuntu18.04で作成(VMware Workstation 15 Playerで確認)
+
 
 ## 導入
 ~~~
-git clone https://github.com/guralin/search_english_word.git
-cd search_english_word/
-pip install -r requirements.txt
+git clone https://github.com/guralin/ReLazy.git
+cd ReLazy/
+~~~
+
+pyenvを用いた仮想環境を構築します
+~~~
+. pyenv_install.sh
+~~~
+pyenvを構築したくない方は単に
+~~~
+pip3 install -r requirements.txt
+~~~
+を実行してください。
+
+
+relazyコマンドとsqlite3のデータベースを作成します。
+~~~
+. set_command.sh
 python create_db.py
-python scraping.py
 ~~~
 ## コマンド集
-- `python scraping.py`:入力待ち状態になり英単語を入力すると和訳が表示されます。
+- `relazy`:入力待ち状態になり英単語を入力するたびに、和訳が表示される。
     - 入力待ち状態で`exit()`またはCtrl+Cで入力待ち状態から脱出
 
+- `relazy {検索したい英単語}`:検索したい英単語の和訳を表示する
 
-- `python scraping.py -l {表示したい履歴の数}`:検索の履歴を表示します。
+- `relazy -l {表示したい履歴の数}`:検索の履歴を表示する。
 
-- `python scraping.py -d {表示したい期間}` : 設定した数字の日にちの間の履歴を表示。
+- `relazy -d {表示したい期間}` : 設定した数字の日にちの間の履歴を表示。
+
