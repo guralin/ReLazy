@@ -6,20 +6,30 @@
 英単語を検索する際に、ブラウザを開くと何故かTwitterやYoutubeなどが一緒に開かれてしまい、やらなければいけないことが全てストップする不具合が発生したためコンソール上で英単語を検索して履歴を保存できるプログラムを作りました。
 
 ## 動作環境
-- Ubuntu18.04で作成
-- sqlite3を使用 (`sudo apt install sqlite3` が必要になるかもしれません)
-- Python3のモジュール
-    - sqlite3
-    - click
-    - BeautifulSoup
+- Ubuntu18.04で作成(VMware Workstation 15 Playerで確認)
+
 
 ## 導入
 ~~~
 git clone https://github.com/guralin/ReLazy.git
 cd ReLazy/
-pip install -r requirements.txt
-python create_db.py
+~~~
+
+pyenvを用いた仮想環境を構築します
+~~~
+. pyenv_install.sh
+~~~
+pyenvを構築したくない方は単に
+~~~
+pip3 install -r requirements.txt
+~~~
+を実行してください。
+
+
+relazyコマンドとsqlite3のデータベースを作成します。
+~~~
 . set_command.sh
+python create_db.py
 ~~~
 ## コマンド集
 - `relazy`:入力待ち状態になり英単語を入力するたびに、和訳が表示される。
