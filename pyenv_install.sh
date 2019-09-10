@@ -4,76 +4,45 @@
 #実行後にdkpgを覗いても、まだ無い場合はインストール失敗とみなして強制終了
 
 # --------------前提パッケージのインストール ----------------------
+#grepした際に、パッケージの完全一致を探すため、空白を差し込んである
+zlib1gr_grep=' zlib1g-dev   '
+libssl_grep=' libssl-dev   '
+libsqlite3_grep=' libsqlite3-dev   '
+sqlite3_grep=' libsqlite3-dev   '
+make_grep=' make    '
+gcc_grep=' gcc    '
 
-is_zlib1g=`dpkg -l | grep zlib1g-dev | wc -l`
-is_libssl=`dpkg -l | grep libssl-dev | wc -l`
-is_libsqlite3=`dpkg -l | grep libsqlite3-dev | wc -l`
-is_sqlite3=`dpkg -l | grep " sqlite3 " | wc -l`
-is_make=`dpkg -l | grep " make     " | wc -l`
-is_gcc=`dpkg -l | grep " gcc     " | wc -l`
 
+function is_installed() {
+    local cnt_package=`dpkg -l | grep $1 | wc -l`
+    echo $cnt_package
+}
 
-if [[ $is_zlib1g -eq 0 ]]; then
-    sudo apt -y install zlib1g-dev
-    is_zlib1g=`dpkg -l | grep zlib1g-dev | wc -l`
-    if [[ $is_zlib1g -eq 0 ]]; then
-        echo "うまくインストールできなかったようです。終了します。"
-        read
-        exit 1
+# 何らかの原因でinstallが出来ない場合、強制終了させる
+function install_package() {
+    local is_ins=`is_installed $1`
+    if [[ $is_ins -eq 0 ]]; then
+        sudo apt -y install$1
+        is_ins=`is_installed $1`
+        if [[ $is_ins -eq 0 ]]; then
+            echo "うまくインストール出来なかったようです。終了します。"
+            read
+            exit 1
+        fi
     fi
-fi
-if [[ $is_libssl -eq 0 ]]; then
-    sudo apt -y install libssl-dev
-    is_libssl=`dpkg -l | grep libssl-dev | wc -l`
-    if [[ $is_libssl -eq 0 ]]; then
-        echo "うまくインストールできなかったようです。終了します。"
-        read
-        exit 1 
-    fi
-fi
-if [[ $is_sqlite3 -eq 0 ]]; then
-    sudo apt -y install sqlite3
-    is_sqlite3=`dpkg -l | grep " sqlite3 " | wc -l`
-    if [[ $is_sqlite3 -eq 0 ]]; then
-        echo "うまくインストールできなかったようです。終了します。"
-        read
-        exit 1
-    fi
-fi
-if [[ $is_libsqlite3 -eq 0 ]]; then
-    sudo apt -y install libsqlite3-dev
-    is_libsqlite3=`dpkg -l | grep libsqlite3-dev | wc -l`
-    if [[ $is_libsqlite3 -eq 0 ]]; then
-        echo "うまくインストールできなかったようです。終了します。"
-        read
-        exit 1
-    fi
-fi
+}
 
-# pyenv install 3.6.6 の際にmakeが無いと失敗する
-if [[ $is_make -eq 0 ]]; then
-    sudo apt -y install make
-    is_make=`dpkg -l | grep " make     " | wc -l`
-    if [[ $is_make -eq 0 ]]; then
-        echo "うまくインストールできなかったようです。終了します。"
-        read
-        exit 1
-    fi
-fi
-if [[ $is_gcc -eq 0 ]]; then
-    sudo apt -y install gcc
-    is_gcc=`dpkg -l | grep " gcc    " | wc -l`
-    if [[ $is_gcc -eq 0 ]]; then
-        echo "うまくインストールできなかったようです。終了します。"
-        read
-        exit 1
-    fi
-fi
+install_package $zlib1gr_grep 
+install_package $libssl_grep
+install_package $libsqlite3_grep
+install_package $sqlite3_grep
+install_package $make_grep
+install_package $gcc_grep
+
 # 対話型インタープリタが使いやすくなる(なくても動く)
 sudo apt -y install libbz2-dev libreadline-dev
 
 # ------------------------------------------------------------------
-
 # --------------python仮想環境の整備 -------------------------------
 
 is_pyenv_path=`cat ~/.profile | grep "export PYENV_ROOT=$HOME/.pyenv" | wc -l`
@@ -120,7 +89,6 @@ if [[ $is_relazy -eq 0 ]]; then
     source ~/.profile
 fi
 # ------------------------------------------------------------------
-
 # --------------pipモジュールのインストール ------------------------
 
 is_pyenv=`pyenv version | grep "relazy3.6.6" | wc -l`
