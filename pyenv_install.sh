@@ -4,26 +4,19 @@
 #実行後にdkpgを覗いても、まだ無い場合はインストール失敗とみなして強制終了
 
 # --------------前提パッケージのインストール ----------------------
-#grepした際に、パッケージの完全一致を探すため、空白を差し込んである
-zlib1gr_grep=" zlib1g-dev   "
-libssl_grep=" libssl-dev   "
-libsqlite3_grep=" libsqlite3-dev   "
-sqlite3_grep=" sqlite3   "
-make_grep=" make   "
-gcc_grep=" gcc    "
 
-
+# 全文一致にするため、単語末尾に:かスペース4つ入っている確認を行う
 function is_installed() {
-    local cnt_package=`dpkg -l | grep "$1" | wc -l`
+	local cnt_package=`dpkg -l | grep -E "\s$1(\s{4}|(:))" | wc -l`
     echo $cnt_package
 }
 
 # 何らかの原因でinstallが出来ない場合、強制終了させる
 function install_package() {
-    local is_ins=`is_installed "$1"`
+    local is_ins=`is_installed $1`
     if [[ $is_ins -eq 0 ]]; then
-        sudo apt -y install "$1"
-        is_ins=`is_installed "$1"`
+        sudo apt -y install $1
+        is_ins=`is_installed $1`
         if [[ $is_ins -eq 0 ]]; then
             echo "うまくインストール出来なかったようです。終了します。"
             read
@@ -31,17 +24,18 @@ function install_package() {
         fi
     fi
 }
-echo ${gcc_grep}
 
-install_package $zlib1gr_grep 
-install_package $libssl_grep
-install_package $libsqlite3_grep
-install_package $sqlite3_grep
-install_package $make_grep
-install_package $gcc_grep
+install_package zlib1g-dev 
+install_package libssl-dev
+install_package libsqlite3-dev
+install_package sqlite3
+install_package make
+install_package gcc
 
 # 対話型インタープリタが使いやすくなる(なくても動く)
-sudo apt -y install libbz2-dev libreadline-dev
+install_package libbz2-dev 
+install_package libreadline-dev 
+
 
 # ------------------------------------------------------------------
 # --------------python仮想環境の整備 -------------------------------
