@@ -31,6 +31,12 @@ relazyコマンドとsqlite3のデータベースを作成します。
 . set_command.sh
 python create_db.py
 ~~~
+
+コンソール上でrelazyコマンドを使用できるようになりました。
+~~~
+relazy
+~~~
+
 ## コマンド集
 - `relazy`:入力待ち状態になり英単語を入力するたびに、和訳が表示される。
     - 入力待ち状態で`exit()`またはCtrl+Cで入力待ち状態から脱出
