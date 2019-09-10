@@ -5,25 +5,25 @@
 
 # --------------前提パッケージのインストール ----------------------
 #grepした際に、パッケージの完全一致を探すため、空白を差し込んである
-zlib1gr_grep=' zlib1g-dev   '
-libssl_grep=' libssl-dev   '
-libsqlite3_grep=' libsqlite3-dev   '
-sqlite3_grep=' libsqlite3-dev   '
-make_grep=' make    '
-gcc_grep=' gcc    '
+zlib1gr_grep=" zlib1g-dev   "
+libssl_grep=" libssl-dev   "
+libsqlite3_grep=" libsqlite3-dev   "
+sqlite3_grep=" sqlite3   "
+make_grep=" make   "
+gcc_grep=" gcc    "
 
 
 function is_installed() {
-    local cnt_package=`dpkg -l | grep $1 | wc -l`
+    local cnt_package=`dpkg -l | grep "$1" | wc -l`
     echo $cnt_package
 }
 
 # 何らかの原因でinstallが出来ない場合、強制終了させる
 function install_package() {
-    local is_ins=`is_installed $1`
+    local is_ins=`is_installed "$1"`
     if [[ $is_ins -eq 0 ]]; then
-        sudo apt -y install$1
-        is_ins=`is_installed $1`
+        sudo apt -y install "$1"
+        is_ins=`is_installed "$1"`
         if [[ $is_ins -eq 0 ]]; then
             echo "うまくインストール出来なかったようです。終了します。"
             read
@@ -31,6 +31,7 @@ function install_package() {
         fi
     fi
 }
+echo ${gcc_grep}
 
 install_package $zlib1gr_grep 
 install_package $libssl_grep
