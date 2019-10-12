@@ -11,20 +11,20 @@ import click
 from bs4 import BeautifulSoup
 
 ERROR_STATUS = -1
-EXIT_STATUS = -2
+EXIT_STATUS  = -2
 
 DATABASE_PATH = os.path.dirname(__file__) + "/word.db"
 
 def mainThread():
+    # 最初に引数の数を評価させることでIndexErrorを防ぐ
     args = sys.argv
     # 引数の最初がハイフンなら、オプションだと判断する
-    # 最初に引数の数を評価させることでIndexErrorを防ぐ
     if  len(args) > 1 and args[1][0] == '-':
         cmd()
-
+    # コマンドラインに引数が渡されない場合
     elif len(args) == 1:
         input_eng_word_in_loop()
-
+    # python scraping.py {検索したいワード}
     elif len(args) == 2:
         word = args[1]
         input_eng_word(word)
@@ -40,19 +40,18 @@ def cmd(list_number,days_ago):
         m.show_words_days_ago(days_ago)
 
 def input_eng_word(word):
+    # 引数にマイナスが渡された場合はハンドリングを行う
     result = save_existing_word(word)
-
     if   result == EXIT_STATUS:
         print('bye')
         sys.exit(0)
-
     elif result == ERROR_STATUS:
         print("検索された英単語は存在しませんでした")
-
     else:
         print(result)
 
 def input_eng_word_in_loop():
+    # 検索を繰り返し行う関数
     while True:
         try:
             word = input('検索したい英単語を入力してください > ')
@@ -63,6 +62,8 @@ def input_eng_word_in_loop():
 
 
 def search_weblio_dictionary(word):
+    # Weblioからスクレイピングを行い、文字列を取り出す
+    # 内容の掲載は行いません。個人の利用に限ります
     r = requests.get('https://ejje.weblio.jp/content/' + word)
     soup = BeautifulSoup(r.content , 'html.parser')
     main = soup.find('td', class_='content-explanation ej')
@@ -75,11 +76,14 @@ def search_weblio_dictionary(word):
 
 
 def save_existing_word(word):
+    # 取り出してきた単語を分けて、保存して、出力する。
+    # データが帰ってきた場合:DBに保存
+    # データがない場合:ERROR_STATUS
+    # 終了する場合:EXIT_STATUS
     m = sqlite3_model()
 
     if word == 'exit()':
         return EXIT_STATUS
-
     ans  = search_weblio_dictionary(word)
     if ans == ERROR_STATUS:
         return ERROR_STATUS
@@ -101,6 +105,7 @@ class sqlite3_model():
         conn.close()
 
     def show_newest_words(self,list_number):
+        # 渡された引数の数字分の単語と訳を新しい順に出力する
         conn = sqlite3.connect(self.connect_database)
         curs = conn.cursor()
         show = 'SELECT jpn_word,eng_word FROM words ORDER BY id DESC LIMIT (?)'
@@ -112,6 +117,7 @@ class sqlite3_model():
         conn.close()
 
     def show_words_days_ago(self,period_days):
+        # 渡された引数の日付から現在までで検索された単語と訳を出力する。
         conn = sqlite3.connect(self.connect_database)
         curs = conn.cursor()
         period_days =  str(0 - period_days)
@@ -120,7 +126,6 @@ class sqlite3_model():
         curs.execute(show,(period_days_for_sql,))
         result = curs.fetchall()
         for row in result:
-            #print('{0:12} | {1} | {2}'.format(row[0],row[1],row[2]))
             print('{0:10} | {1}'.format(row[1],row[2]))
             print("--------------------------------------")
         conn.close()
