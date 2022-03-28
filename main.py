@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import deepl
 import requests
 import datetime
 import sys
@@ -61,18 +62,11 @@ def input_eng_word_in_loop():
         input_eng_word(word)
 
 
-def search_weblio_dictionary(word):
-    # Weblioからスクレイピングを行い、文字列を取り出す
-    # 内容の掲載は行いません。個人の利用に限ります
-    r = requests.get('https://ejje.weblio.jp/content/' + word)
-    soup = BeautifulSoup(r.content , 'html.parser')
-    main = soup.find('td', class_='content-explanation ej')
-    try:
-        ans = main.string
-        return ans
-# 検索した英単語が見つからない場合
-    except AttributeError:
-        return ERROR_STATUS
+def search_using_deepl(word):
+    # DeepLのAPIを用いて検索を行います。
+    translator = deepl.Translator(os.getenv("DEEPL_AUTH_KEY"))
+    result = translator.translate_text(word, target_lang="JA")
+    return result.text
 
 
 def save_existing_word(word):
@@ -84,8 +78,9 @@ def save_existing_word(word):
 
     if word == 'exit()':
         return EXIT_STATUS
-    ans  = search_weblio_dictionary(word)
-    if ans == ERROR_STATUS:
+    ans  = search_using_deepl(word)
+    print(ans)
+    if ans == ERROR_STATUS or ans == "":
         return ERROR_STATUS
     else:
         m.add_word(word,ans)
